@@ -35,48 +35,61 @@ RSpec.describe CoursesController, type: :controller do
     end
   end
 
-  describe "GET new" do
-
-    it "assign @course" do
-
-      course = FactoryGirl.build(:course)
-      get :new
-      expect(assigns(:course)).to be_new_record
-      expect(assigns(:course)).to be_instance_of(Course)
-    end
-
-    it "render template" do
-      course = FactoryGirl.build(:course)
-      get :new
-      expect(response).to render_template("new")
-    end
-  end
-
   describe "POST create" do
 
-    it "doesn't create a record when course doesn't have a title" do
-      expect { post :create, course: {:description => "bar"}}.to change{Course.count}.by(0)
+    let(:user) { FactoryGirl.create(:user) }
+
+    context "when course doesn't have a title" do
+
+      before { sign_in_user }
+
+      it "doesn't create a record" do
+        expect { post :create, course: {:description => "bar"}}.to change{Course.count}.by(0)
+      end
+
+      it "render new template" do
+        post :create, course: {:description => "bar"}
+        expect(response).to render_template("new")
+      end
     end
 
-    it "render new template when course doesn't have title" do
-      post :create, course: {:description => "bar"}
-      expect(response).to render_template("new")
+    context "when  course have a title" do
+
+      before {sign_in_user}
+
+      it "create a new course record" do
+        course = FactoryGirl.build(:course)
+        expect{ post :create, course: FactoryGirl.attributes_for(:course)} .to change{ Course.count}.by(1)
+      end
+
+      it "redirect to courses_path" do
+        course = FactoryGirl.build(:course)
+        post :create, course: FactoryGirl.attributes_for(:course)
+        expect(response).to redirect_to courses_path
+      end
+
+      it "create a course for user" do
+        course = FactoryGirl.build(:course)
+        post :create, course: FactoryGirl.attributes_for(:course)
+        expect(Course.last.user).to eq(user)
+      end
+
+      it_behaves_like "require_sign_in" do
+        let (:action) {
+          course = FactoryGirl.build(:course)
+          post :create, course: FactoryGirl.attributes_for(:course)
+        }
+      end
     end
 
-
-    it "create a new course record when course has title" do
-      course = FactoryGirl.build(:course)
-      expect{ post :create, course: FactoryGirl.attributes_for(:course)} .to change{ Course.count}.by(1)
-    end
-
-    it "redirect to courses_path when course has title" do
-      course = FactoryGirl.build(:course)
-      post :create, course: FactoryGirl.attributes_for(:course)
-      expect(response).to redirect_to courses_path
-    end
   end
 
   describe "GET edit" do
+
+    let(:user) { FactoryGirl.create(:user) }
+    let(:course) { FactoryGirl.create(:course) }
+    before { sign_in_user }
+
     it "assign course" do
       course = FactoryGirl.create(:course)
       get :edit, :id => course.id
@@ -87,6 +100,12 @@ RSpec.describe CoursesController, type: :controller do
       course = FactoryGirl.create(:course)
       get :edit, :id => course.id
       expect(response).to render_template("edit")
+    end
+
+    it_behaves_like "require_sign_in" do
+      let (:action) {
+        get :edit , id: course.id
+      }
     end
   end
 
@@ -153,5 +172,44 @@ RSpec.describe CoursesController, type: :controller do
       expect(get: "/").to route_to(controller: "courses", action: "index")
     end
   end
-#destroy
+
+  describe "GET new" do
+
+    let(:user) { FactoryGirl.create(:user) }
+    let(:course) { course = FactoryGirl.build(:course) }
+
+    context "when user login" do
+      before do
+        sign_in user
+        get :new
+      end
+
+      it "assign @course" do
+
+        expect(assigns(:course)).to be_new_record
+        expect(assigns(:course)).to be_instance_of(Course)
+      end
+
+      it "render template" do
+
+        expect(response).to render_template("new")
+      end
+
+      it_behaves_like "require_sign_in" do
+        let (:action) {
+          get :new
+        }
+      end
+
+    end
+
+    context "when user not login" do
+
+      it "redirect_to new_user_session_path" do
+        get :new
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
 end
