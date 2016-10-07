@@ -100,12 +100,18 @@ RSpec.describe CoursesController, type: :controller do
       end
     end
 
-    it_behaves_like "require_sign_in" do
-      let (:action) {
-        course = FactoryGirl.build(:course)
-        post :create, course: FactoryGirl.attributes_for(:course)
-      }
+    it "create a course for user" do
+      course = FactoryGirl.build(:course)
+      post :create, course: FactoryGirl.attributes_for(:course)
+      expect(Course.last.user).to eq(user)
     end
+
+    # it_behaves_like "require_sign_in" do
+    #   let (:action) {
+    #     course = FactoryGirl.build(:course)
+    #     post :create, course: FactoryGirl.attributes_for(:course)
+    #   }
+    # end
 
   end
 
