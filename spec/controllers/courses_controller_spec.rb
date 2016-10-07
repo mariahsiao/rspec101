@@ -101,12 +101,12 @@ RSpec.describe CoursesController, type: :controller do
       end
     end
 
-    it_behaves_like "require_sign_in" do
-      let (:action) {
-        course = FactoryGirl.build(:course)
-        post :create, course: FactoryGirl.attributes_for(:course)
-      }
-    end
+    # it_behaves_like "require_sign_in" do
+    #   let (:action) {
+    #     course = FactoryGirl.build(:course)
+    #     post :create, course: FactoryGirl.attributes_for(:course)
+    #   }
+    # end
 
   end
 
