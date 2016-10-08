@@ -1,6 +1,6 @@
 class CoursesController < ApplicationController
 
-  before_action :authenticate_user!, :only => [:new, :create]
+  before_action :authenticate_user!, :only => [:new, :create, :edit]
 
   def index
     @courses = Course.all
@@ -16,6 +16,7 @@ class CoursesController < ApplicationController
 
   def create
     @course = Course.new(course_params)
+    @course.user = current_user
 
     if @course.save
       redirect_to courses_path
