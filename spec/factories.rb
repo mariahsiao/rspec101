@@ -9,7 +9,8 @@ FactoryGirl.define do
   end
 
   factory :course do
-    description "Description."
-    title "Course Name"
+    description "Courses Description."
+    title "Course Title"
+    user
   end
 end
