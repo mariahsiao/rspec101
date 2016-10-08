@@ -204,34 +204,27 @@ RSpec.describe CoursesController, type: :controller do
   describe "DELETE destroy" do
 
     let(:user) {FactoryGirl.create(:user) }
-    let!(:course_with_owner) { FactoryGirl.create(:course, user: user )}
-    let(:course_without_owner) { FactoryGirl.create(:course)}
+    let!(:course) { FactoryGirl.create(:course, user: user )}
 
     before { sign_in_user }
 
     it "assigns @course" do
-      delete :destroy, id: course_with_owner.id
-      expect(assigns[:course]).to eq(course_with_owner)
+      delete :destroy, id: course.id
+      expect(assigns[:course]).to eq(course)
     end
 
     it "delete a record" do
-      expect { delete :destroy, id: course_with_owner.id}.to change{Course.count}.by(-1)
+      expect { delete :destroy, id: course.id}.to change{Course.count}.by(-1)
     end
 
     it "redirect to courses_path" do
-      delete :destroy, id: course_with_owner.id
+      delete :destroy, id: course.id
       expect(response).to redirect_to courses_path
-    end
-
-    it_behaves_like "require_course_owner" do
-      let (:action) {
-        delete :destroy, id: course_without_owner.id
-      }
     end
 
     it_behaves_like "require_sign_in" do
       let (:action) {
-        delete :destroy, id: course_without_owner.id
+        delete :destroy, id: course.id
       }
     end
 
@@ -242,5 +235,4 @@ RSpec.describe CoursesController, type: :controller do
       expect(get: "/").to route_to(controller: "courses", action: "index")
     end
   end
-#destroy
 end
