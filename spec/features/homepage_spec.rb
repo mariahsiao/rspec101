@@ -3,7 +3,7 @@ require 'rails_helper'
 describe "homepage", :type => :feature do
 
   it 'welcomes the user' do
-    homepage.go
+    home_page.go
     expect(page).to have_content 'Welcome'
   end
 
