@@ -49,5 +49,7 @@ group :development, :test do
 
   gem "shoulda-matchers", "3.1.1"
 
+  gem "capybara"
+
 end
 
