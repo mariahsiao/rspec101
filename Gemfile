@@ -51,5 +51,7 @@ group :development, :test do
 
   gem "capybara"
 
+  gem "formulaic"
+
 end
 
