@@ -10,7 +10,7 @@ describe "user create course", :type => :feature do
 
   scenario "invalid" do
     course_form.create("", "")
-    expect(page).to have_text("Add a course")
+    expect(page).to have_text("can't be blank")
   end
 
 
